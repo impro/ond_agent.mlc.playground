@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">PrivacyAware React Engine</string>
+    <string name="prompt_1">
+Here is the retrieved context
+--------------------------------------------------
+$CONTEXT
+--------------------------------------------------
+Here is the user\'s query: $QUERY
+    </string>
+    <string name="prompt_2">
+    Here is the retrieved context, $CONTEXT, and here is the user\'s query, $QUERY.
+    </string>
+</resources>

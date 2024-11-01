@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">127.0.0.1</domain>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">172.23.253.244</domain>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">192.168.55.175</domain>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">172.23.150.85</domain>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">sk-iptv.com</domain>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">hanafostv.com</domain>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">tmapapi.sktelecom.com</domain>
+        <domain includeSubdomains="true">apis.openapi.sk.com</domain>
+        <domain includeSubdomains="true">topopentile1.tmap.co.kr</domain>
+        <domain includeSubdomains="true">topopentile2.tmap.co.kr</domain>
+        <domain includeSubdomains="true">topopentile3.tmap.co.kr</domain>
+        <domain includeSubdomains="true">topopentile4.tmap.co.kr</domain>
+        <domain includeSubdomains="true">tmap.co.kr</domain>
+        <domain includeSubdomains="true">code.jquery.com</domain>
+
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">map.naver.com</domain>
+        <domain includeSubdomains="true">map.naver.net</domain>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">naver.com</domain>
+        <domain includeSubdomains="true">naver.net</domain>
+    </domain-config>
+</network-security-config>
+<!--
+<domain includeSubdomains="true">172.23.148.193</domain>
+-->
+    <!-- OpenAI API를 위한 설정 추가 -->
+<!--
+<domain-config cleartextTrafficPermitted="true">
+<domain includeSubdomains="true">com.rabbitr1</domain>
+<trust-anchors>
+    <certificates src="system" />
+</trust-anchors>
+</domain-config>
+<domain-config>
+<domain includeSubdomains="true">api.openai.com</domain>
+<trust-anchors>
+    <certificates src="system" />
+</trust-anchors>
+</.domain-config>
+-->
+    <!-- 기본 설정 추가 -->
+<!--
+<base-config cleartextTrafficPermitted="false">
+<trust-anchors>
+    <certificates src="system" />
+    <certificates src="user" />
+</trust-anchors>
+</base-config>
+-->

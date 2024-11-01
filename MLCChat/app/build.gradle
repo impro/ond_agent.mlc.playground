@@ -1,0 +1,191 @@
+//import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    //kotlin("kapt")
+    //id("com.google.dagger.hilt.android")
+    id 'kotlin-kapt'
+    id("com.google.dagger.hilt.android") version "2.44"// Hilt 플러그인 추가
+    //id("io.objectbox") // ObjectBox 플러그인을 선언합니다.
+
+}
+
+//val geminiKey: String = gradleLocalProperties(rootDir).getProperty("geminiKey")
+
+android {
+    namespace 'ai.mlc.mlcchat'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "ai.mlc.mlcchat"
+        minSdk 26
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+        ndk {
+            //abiFilters.addAll(listOf("arm64-v8a"))
+            abiFilters "arm64-v8a"
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        //sourceCompatibility JavaVersion.VERSION_1_8
+        //targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        //jvmTarget = '1.8'
+        jvmTarget = "17"
+    }
+    buildFeatures {
+        compose true
+        buildConfig true
+
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.4.3'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            // Protobuf 중복 제거
+            //exclude 'google/protobuf/empty.proto'
+            //exclude 'google/protobuf/*.proto'
+            exclude 'META-INF/DEPENDENCIES'
+
+
+        }
+    }
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDirs("src/main/jniLibs")
+        }
+    }
+}
+//configurations.all {
+//    resolutionStrategy.force 'com.google.protobuf:protobuf-java:3.24.3'
+//    resolutionStrategy.force 'com.google.protobuf:protobuf-javalite:3.24.3'
+//}
+//configurations.all {
+//    resolutionStrategy {
+//        force("com.google.protobuf:protobuf-java:3.24.3") // 또는 원하는 버전
+//    }
+//}
+
+hilt {
+    enableAggregatingTask = false
+}
+
+//configurations.all {
+//    resolutionStrategy {
+//        force "com.google.protobuf:protobuf-javalite:4.26.1"
+//    }
+//}
+
+dependencies {
+    implementation project(":mlc4j")
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    implementation 'com.github.jeziellago:compose-markdown:0.5.2'
+    implementation 'androidx.activity:activity-compose:1.7.1'
+    implementation platform('androidx.compose:compose-bom:2022.10.00')
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3:1.1.0'
+    implementation 'androidx.compose.material:material-icons-extended'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.navigation:navigation-compose:2.5.3'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation fileTree(dir: 'src/main/libs', include: ['*.aar', '*.jar'], exclude: [])
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+
+
+    //API_CALL
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Compose ViewModel 의존성
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
+    implementation("com.google.dagger:hilt-android:2.44") // Hilt 라이브러리 추가
+    kapt("com.google.dagger:hilt-android-compiler:2.44") // Hilt 컴파일러 추가
+
+    // ObjectBox 의존성 추가
+    implementation ('io.objectbox:objectbox-kotlin:4.0.0')
+    kapt ('io.objectbox:objectbox-processor:4.0.0')
+
+    //xxxxx implementation("io.objectbox:objectbox-gradle-plugin:4.0.0") //<=== IT RAISE PROTOBUF ERROR
+
+    // Gemini SDK - LLM
+    implementation("com.google.ai.client.generativeai:generativeai:0.6.0")
+
+    // Sentence Embeddings
+    // https://github.com/shubham0204/Sentence-Embeddings-Android
+    implementation("com.github.shubham0204:Sentence-Embeddings-Android:0.0.3")
+
+    // Mediapipe Library
+    //implementation ("com.google.mediapipe:tasks-audio:0.10.14")
+    //implementation ("com.google.mediapipe:tasks-vision:0.10.14")
+    //implementation ("com.google.mediapipe:tasks-genai:0.10.14")
+
+    // iTextPDF - for parsing PDFs
+    implementation("com.itextpdf:itextpdf:5.5.13.3")
+
+    // Apache POI
+    //implementation(libs.apache.poi)
+    //implementation(libs.apache.poi.ooxml)
+    implementation("org.apache.poi:poi:5.2.5")
+    implementation("org.apache.poi:poi-ooxml:5.2.5")
+
+    implementation ("com.google.api-client:google-api-client-android:2.2.0")
+    implementation ("com.google.http-client:google-http-client-android:1.42.3")
+    implementation ("com.google.http-client:google-http-client-gson:1.42.3")
+    implementation ("com.google.apis:google-api-services-gmail:v1-rev20230925-2.0.0")
+
+    implementation("com.squareup:javapoet:1.13.0") // Hilt와 호환되는 JavaPoet 버전
+
+    //implementation("com.google.protobuf:protobuf-javalite:4.26.1")
+    //implementation 'com.google.protobuf:protobuf-java:3.24.3'
+    //implementation 'com.google.protobuf:protobuf-javalite:3.24.3'
+    //implementation('com.google.protobuf:protobuf-java:3.24.3') {
+    //    exclude group: 'com.google.protobuf', module: 'protobuf-javalite'
+    //}
+    //implementation("com.google.dagger:hilt-android:2.44") // Check for the latest version
+    //kapt("com.google.dagger:hilt-compiler:2.44")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0") // Check for the latest version
+    //implementation("androidx.navigation:navigation-compose:2.7.7") // Check for the latest version
+    implementation("io.objectbox:objectbox-gradle-plugin:4.0.0") // 최신 버전 사용
+    //implementation("io.grpc:grpc-protobuf-lite:1.52.1") {
+    //    exclude group: 'com.google.protobuf', module: 'protobuf-javalite'
+    //}
+    // ObjectBox - vector database
+    debugImplementation("io.objectbox:objectbox-android-objectbrowser:4.0.0")
+    releaseImplementation("io.objectbox:objectbox-android:4.0.0")
+
+    //implementation("com.google.android.gms:play-services-auth:20.6.0") // 최신 버전으로 변경될 수 있음
+    implementation ("com.google.android.gms:play-services-auth:20.5.0")
+
+    //implementation("com.google.android.gms:play-services-base:18.2.0") /
+}
+//apply(plugin = "io.objectbox")

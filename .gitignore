@@ -1,0 +1,7 @@
+mlc4j/
+.gradle/
+build/
+.idea/
+MLCEngineExample/
+MLCChat/app/src/main/assets/gemma-1.1-2b-it-gpu-int4.bin
+MLCChat/app/src/main/jniLibs/arm64-v8a/libtvm4j_runtime_packed.so
