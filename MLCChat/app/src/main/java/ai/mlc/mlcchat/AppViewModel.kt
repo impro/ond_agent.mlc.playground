@@ -26,16 +26,26 @@ import kotlin.concurrent.thread
 import ai.mlc.mlcllm.OpenAIProtocol.ChatCompletionMessage
 import android.util.Log
 import com.lamrnd.docqa.GmailHelper
+import com.lamrnd.docqa.domain.QAUseCase
 import com.lamrnd.ond_agent.connect.call_onsite.AgentCallback
 import com.lamrnd.ond_agent.eventplay.actions.WebActions
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.future.future
 import java.util.concurrent.CompletableFuture
+import javax.inject.Inject
 
-class AppViewModel(application: Application) : AndroidViewModel(application) {
+//class AppViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+    class AppViewModel @Inject constructor(
+        application: Application,
+        val qaUseCase: QAUseCase // Hilt를 통해 주입받음
+    ) : AndroidViewModel(application) {
+  //      val qaUseCase = QAUseCase()
+
     val modelList = emptyList<ModelState>().toMutableStateList()
     val chatState = ChatState()
     val modelSampleList = emptyList<ModelRecord>().toMutableStateList()

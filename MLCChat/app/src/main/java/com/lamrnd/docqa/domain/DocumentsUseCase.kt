@@ -47,11 +47,17 @@ constructor(private val chunksUseCase: ChunksUseCase, private val documentsDB: D
             Log.d("APP", "Chunks: $chunks")
 
             // 안전하게 chunks의 요소에 접근
+                    // 모든 Chunk를 출력
+            chunks.forEachIndexed { index, chunk ->
+                Log.d("APP", "Chunk[$index]: $chunk")
+            }
+            /*
             if (chunks.isNotEmpty()) Log.d("APP", "Chunks[0]: ${chunks[0]}")
             if (chunks.size > 1) Log.d("APP", "Chunks[1]: ${chunks[1]}")
             if (chunks.size > 2) Log.d("APP", "Chunks[2]: ${chunks[2]}")
             if (chunks.size > 3) Log.d("APP", "Chunks[3]: ${chunks[3]}")
             if (chunks.size > 4) Log.d("APP", "Chunks[4]: ${chunks[4]}")
+             */
             //Log.d("APP", "Chunks[0]: ${chunks[0]}")
             //Log.d("APP", "Chunks[1]: ${chunks[1]}")
             //Log.d("APP", "Chunks[2]: ${chunks[2]}")

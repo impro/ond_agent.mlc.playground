@@ -41,13 +41,17 @@ object AppModule {
         return ChunksDB()
     }
 
-    @Provides
-    @Singleton
+
     //fun provideGeminiRemoteAPI(context: Application): GeminiRemoteAPI {
     //    return GeminiRemoteAPI(context)
     //}
-    fun provideGeminiRemoteAPI(): GeminiRemoteAPI {
-        return GeminiRemoteAPI()
+    //fun provideGeminiRemoteAPI(context: Context): GeminiRemoteAPI {
+
+    @Provides
+    @Singleton
+    fun provideGeminiRemoteAPI(application: Application): GeminiRemoteAPI {
+        return GeminiRemoteAPI(application)
+        //return GeminiRemoteAPI(context)
     }
 //    private val gmailHelper: GmailHelper
 
@@ -56,7 +60,7 @@ object AppModule {
 //    fun provideGmailHelperAPI(): GeminiRemoteAPI {
 //        return GmailHelper(
 //    }
-@Provides
+    @Provides
 //    fun provideGmailHelper(activity: Activity, documentsUseCase: DocumentsUseCase): GmailHelper {
 //        val gmailHelper = GmailHelper(documentsUseCase)
 //        gmailHelper.setActivity(activity) // Manually set the activity

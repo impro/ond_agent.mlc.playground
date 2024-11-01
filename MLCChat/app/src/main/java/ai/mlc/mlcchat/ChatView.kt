@@ -22,9 +22,11 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ConnectingAirports
 import androidx.compose.material.icons.filled.Email
@@ -51,6 +53,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -58,13 +61,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.launch
 import androidx.lifecycle.viewModelScope
 import com.lamrnd.docqa.GmailHelper
+import com.lamrnd.docqa.domain.llm.LLAMAOnDAPI
 import kotlinx.coroutines.launch
 import java.util.concurrent.CompletableFuture
+import com.lamrnd.docqa.ui.viewModels.ChatViewModel
+import com.lamrnd.docqa.ui.viewModels.ResponseType
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 @ExperimentalMaterial3Api
 @Composable
@@ -275,6 +284,7 @@ fun SendMessageView(viewModel: AppViewModel, chatState: AppViewModel.ChatState, 
     val localFocusManager = LocalFocusManager.current
     val context = LocalContext.current
     val engine = MLCEngine()
+    //val chatViewModel: ChatViewModel = hiltViewModel()
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(5.dp),
@@ -636,6 +646,115 @@ fun SendMessageView(viewModel: AppViewModel, chatState: AppViewModel.ChatState, 
             modifier = Modifier
                 .weight(9f),
         )
+        //val context = LocalContext.current  // 현재 Compose의 Context 가져오기
+
+        IconButton(
+            modifier = Modifier.background(Color.Blue, CircleShape),
+            onClick = {
+                if (text.trim().isEmpty()) {
+                    Toast.makeText(context, "Enter a query to execute", Toast.LENGTH_LONG).show()
+                    return@IconButton
+                }
+
+                // 쿼리 처리 여부에 따라 shouldProcess 값 설정
+                //val shouldProcess = true // 또는 false로 설정 가능
+                val shouldProcess = false // 또는 false로 설정 가능
+
+                var queryText  = text
+
+                //** CoroutineScope를 사용하여 비동기 호출
+/*
+                CoroutineScope(Dispatchers.Main).launch {
+                    val queryResult = LLAMAOnDAPI(context).generateResponse(text, shouldProcess)
+
+                    if (queryResult.isNullOrEmpty()) {
+                        Toast.makeText(context, "Failed to generate response", Toast.LENGTH_LONG)
+                            .show()
+                    } else {
+                        // 쿼리 결과를 화면에 표시
+                        Toast.makeText(context, "Generated Query: $queryResult", Toast.LENGTH_LONG)
+                            .show()
+                        Log.d("QueryResult", "Generated Query: $queryResult")
+                    }
+                }
+*/
+                //2
+                coroutineScope.launch {
+                    try {
+                        // `await()`을 사용하여 `requestGenerateSQ`의 결과를 비동기적으로 기다림
+                        val result = chatState.requestGenerateSQ(text).await()
+                        Log.d("SendMessageView", "첫 번째 결과: $result")
+                        result.replace("`", "")  // ' 제거
+                        Log.d("SendMessageView", "첫 번째 결과 processing : $result")
+
+                        if (result.isNullOrEmpty()) {
+                            Log.e("SendMessageView", "첫 번째 결과가 null입니다.")
+                            return@launch
+                        }
+
+                        Log.d("SendMessageView", "초기 text 값 2: $text")
+                        Log.d("SendMessageView", "초기 text 값 local 2: $queryText") // currentText 사용
+
+                        // 결과가 null이 아닌 경우에만 requestGenerateEmbeddingVector 호출
+                        chatState.requestGenerateEmbeddingVector(result, gmailHelper)
+
+                    } catch (e: Exception) {
+                        Log.e("SendMessageView", "에러 발생: ${e.message}")
+                    }
+                }
+
+                //chatViewModel.questionState.value = questionText
+
+                //questionText = ""
+                //chatViewModel.isGeneratingResponseState.value = true
+                Log.d("SendMessageView", "query text : $text")
+                //viewModel.qaUseCase.getAnswer
+                Log.d("SendMessageView", "getAnswer START: $text")
+                viewModel.qaUseCase.getAnswer_base(
+                    text, //chatViewModel.questionState.value,
+                    context.getString(R.string.prompt_1),
+                    onResponse = { queryResult ->
+                        Log.d(" chatViewModel.qaUseCase.getAnswer : ", "QueryResult: ${queryResult.response}")
+                    },
+                    onOnDeviceResponse = { onDeviceQueryResult ->
+                        Log.d(" chatViewModel.qaUseCase.getAnswer : ", "OnDeviceQueryResult: ${onDeviceQueryResult.responses}")
+                    }
+                )
+                Log.d("SendMessageView", "getAnswer END: $text")
+
+                /*
+                viewModel.qaUseCase.getAnswer(
+                    text, //chatViewModel.questionState.value,
+                    context.getString(R.string.prompt_1),
+                    onResponse = { queryResult ->
+                        // QueryResult에 대한 처리 로직
+                        //chatViewModel.isGeneratingResponseState.value = false
+                        //chatViewModel.responseState.value = queryResult.response
+                        //chatViewModel.retrievedContextListState.value = queryResult.context
+                        //chatViewModel.responseTypeState.value = ResponseType.QUERY_RESULT
+                        Log.d(" chatViewModel.qaUseCase.getAnswer : ", "QueryResult: ${queryResult.response}")
+                    },
+                    onOnDeviceResponse = { onDeviceQueryResult ->
+                        // OnDeviceQueryResult에 대한 처리 로직
+                        //chatViewModel.isGeneratingResponseState.value = false
+                           //chatViewModel.responseState.value = onDeviceQueryResult.responses
+                        //chatViewModel.responseOnDeviceState.value = onDeviceQueryResult.responses
+                        //chatViewModel.retrievedContextListState.value = onDeviceQueryResult.context
+                        //chatViewModel.responseTypeState.value = ResponseType.ON_DEVICE_RESULT
+                        Log.d(" chatViewModel.qaUseCase.getAnswer : ", "OnDeviceQueryResult: ${onDeviceQueryResult.responses}")
+                    }
+                )
+                 */
+            }
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                contentDescription = "Send query",
+                tint = Color.White
+            )
+        }
+
+
         IconButton(
             onClick = {
                 localFocusManager.clearFocus()

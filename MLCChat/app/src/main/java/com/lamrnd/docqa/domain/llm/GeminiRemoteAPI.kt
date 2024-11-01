@@ -19,10 +19,25 @@ import java.util.Properties
 //val geminiRemoteAPI = GeminiRemoteAPI(this) // Activity의 경우
 // val geminiRemoteAPI = GeminiRemoteAPI(applicationContext) // Application context 사용
 
-class GeminiRemoteAPI {
-//class GeminiRemoteAPI(private val context: Context) {
-    private val context: Context = null!!
+fun loadPropertiesFromAssets(context: Context): Properties {
+    val properties = Properties()
+
+    try {
+        context.assets.open("local.properties").use { inputStream ->
+            properties.load(inputStream)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    return properties
+}
+
+//class GeminiRemoteAPI {
+class GeminiRemoteAPI(private val context: Context) {
+    //private val context: Context = null!!
     //private val apiKey = BuildConfig.geminiKey
+    /*
     private val apiKey: String by lazy {
         val properties = Properties()
         //val localPropertiesFile = File(rootDir, "local.properties")
@@ -31,6 +46,11 @@ class GeminiRemoteAPI {
         if (localPropertiesFile.exists()) {
             properties.load(localPropertiesFile.inputStream())
         }
+        properties.getProperty("geminiKey") ?: error("geminiKey가 local.properties 파일에 정의되지 않았습니다.")
+    }
+    */
+    private val apiKey: String by lazy {
+        val properties = loadPropertiesFromAssets(context)
         properties.getProperty("geminiKey") ?: error("geminiKey가 local.properties 파일에 정의되지 않았습니다.")
     }
 
@@ -44,6 +64,7 @@ class GeminiRemoteAPI {
         val configBuilder = GenerationConfig.Builder()
         configBuilder.topP = 0.4f
         configBuilder.temperature = 0.3f
+        Log.d("GeminiRemoteAPI", "apiKey: $apiKey")
         generativeModel =
             GenerativeModel(
                 modelName = "gemini-1.5-flash",
